@@ -1,0 +1,22 @@
+package com.scolarite.backend.entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor
+public class AppUser {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String username; // Le login (ex: "admin")
+
+    @Column(nullable = false)
+    private String password; // Le mot de passe crypté
+
+    private String role; // "ADMIN" ou "USER"
+}
