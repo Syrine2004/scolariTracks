@@ -31,7 +31,11 @@ public class ClasseServiceImpl implements ClasseService {
     }
 
     @Override
-    public void deleteClasse(Long id) {
-        classeRepository.deleteById(id);
+    public boolean deleteClasse(Long id) {
+        if (classeRepository.existsById(id)) {
+            classeRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

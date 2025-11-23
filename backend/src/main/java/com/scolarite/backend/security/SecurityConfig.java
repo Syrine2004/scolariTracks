@@ -44,33 +44,37 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-
-                        // 1. Autoriser OPTIONS et Login/Register à TOUS
+                        // Permettre tout pour Login/Register/OPTIONS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // 2. [FIX FINAL] Autoriser la LECTURE (GET) à TOUS (Public) pour éviter le 403 persistant
+                        // Documentation Swagger/OpenAPI - Accès public
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api-docs/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-resources/**", "/webjars/**").permitAll()
+
+                        // SOLUTION D'URGENCE : Rendre la lecture PUBIQUE
                         .requestMatchers(HttpMethod.GET, "/api/classes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/etudiants/**").permitAll()
 
-                        // 3. L'ÉCRITURE (POST/PUT/DELETE) reste STRICTEMENT réservée aux ADMINS
+                        // L'écriture reste sécurisée
                         .requestMatchers(HttpMethod.POST, "/api/etudiants/**", "/api/classes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/etudiants/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/etudiants/**", "/api/classes/**").hasRole("ADMIN")
 
-                        // 4. Bloquer tout le reste (Sécurité par défaut)
+                        // Bloquer tout le reste
                         .anyRequest().denyAll()
                 );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        // Autoriser le frontend React et Swagger UI
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

@@ -3,6 +3,8 @@ package com.scolarite.backend.services;
 import com.scolarite.backend.entities.Etudiant;
 import com.scolarite.backend.repositories.EtudiantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,13 @@ public class EtudiantServiceImpl implements EtudiantService {
     }
 
     @Override
-    public List<Etudiant> recupererTousLesEtudiants() {
-        return etudiantRepository.findAll();
+    public Page<Etudiant> recupererTousLesEtudiants(Pageable pageable) {
+        return etudiantRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Etudiant> recupererParClasse(Long classeId, Pageable pageable) {
+        return etudiantRepository.findByClasseId(classeId, pageable);
     }
 
     @Override
@@ -41,7 +48,11 @@ public class EtudiantServiceImpl implements EtudiantService {
     }
 
     @Override
-    public void supprimerEtudiant(Long id) {
-        etudiantRepository.deleteById(id);
+    public boolean supprimerEtudiant(Long id) {
+        if (etudiantRepository.existsById(id)) {
+            etudiantRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

@@ -33,6 +33,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // Ignorer les endpoints d'authentification et Swagger
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/auth") || 
+            path.startsWith("/swagger-ui") || 
+            path.startsWith("/api-docs") || 
+            path.startsWith("/v3/api-docs") ||
+            path.startsWith("/swagger-resources") ||
+            path.startsWith("/webjars")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 1. Récupérer le token dans l'en-tête "Authorization"
         String authHeader = request.getHeader("Authorization");
         String token = null;

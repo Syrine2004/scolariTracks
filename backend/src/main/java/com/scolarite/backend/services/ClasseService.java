@@ -7,5 +7,5 @@ public interface ClasseService {
     List<Classe> getAllClasses();
     Classe createClasse(Classe classe);
     Classe updateClasse(Long id, Classe classe);
-    void deleteClasse(Long id);
+    boolean deleteClasse(Long id);
 }

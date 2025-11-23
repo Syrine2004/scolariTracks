@@ -6,6 +6,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin("*")
+@Tag(name = "Authentification", description = "API pour l'authentification et l'inscription des utilisateurs")
 public class AuthController {
 
     @Autowired
@@ -39,7 +45,14 @@ public class AuthController {
     @Value("${scolarite.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    // 1. Endpoint de Login (Connexion)
+    @Operation(
+        summary = "Connexion utilisateur",
+        description = "Authentifie un utilisateur et retourne un token JWT"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Connexion réussie"),
+        @ApiResponse(responseCode = "401", description = "Identifiants incorrects", content = @Content)
+    })
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody AppUser loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -56,7 +69,14 @@ public class AuthController {
         return response;
     }
 
-    // 2. Endpoint de Register (Inscription) - AJOUTÉ ICI
+    @Operation(
+        summary = "Inscription utilisateur",
+        description = "Crée un nouveau compte utilisateur avec le rôle USER par défaut"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Inscription réussie"),
+        @ApiResponse(responseCode = "400", description = "Nom d'utilisateur déjà pris", content = @Content)
+    })
     @PostMapping("/register")
     public Map<String, String> register(@RequestBody AppUser user) {
         Map<String, String> response = new HashMap<>();
