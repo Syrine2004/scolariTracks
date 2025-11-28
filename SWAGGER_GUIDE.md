@@ -82,3 +82,4 @@ Votre projet répond maintenant aux exigences suivantes du guide :
 2. ✅ **Pagination** : Implémentée côté backend et frontend
 3. ✅ **Tri dynamique** : Implémenté côté backend et frontend
 
+

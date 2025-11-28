@@ -1,3 +1,4 @@
+
 package com.scolarite.backend.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -13,28 +14,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("API Gestion Scolarité")
-                        .version("1.0.0")
-                        .description("API REST pour la gestion des étudiants et des classes")
-                        .contact(new Contact()
-                                .name("Équipe Scolarité")
-                                .email("contact@scolarite.com"))
-                        .license(new License()
-                                .name("Apache 2.0")
-                                .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .components(new Components()
-                        .addSecuritySchemes("Bearer Authentication", 
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                                        .description("Entrez votre token JWT (sans le préfixe 'Bearer ')")
-                        ));
-    }
+        @Bean
+        public OpenAPI customOpenAPI() {
+                return new OpenAPI()
+                                .info(new Info()
+                                                .title("API Gestion Scolarité")
+                                                .version("1.0.0")
+                                                .description("API REST pour la gestion des étudiants et des classes")
+                                                .contact(new Contact()
+                                                                .name("Équipe Scolarité")
+                                                                .email("contact@scolarite.com"))
+                                                .license(new License()
+                                                                .name("Apache 2.0")
+                                                                .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
+                                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                                .components(new Components()
+                                                .addSecuritySchemes("Bearer Authentication",
+                                                                new SecurityScheme()
+                                                                                .type(SecurityScheme.Type.HTTP)
+                                                                                .scheme("bearer")
+                                                                                .bearerFormat("JWT")
+                                                                                .description("Entrez votre token JWT (sans le préfixe 'Bearer ')")));
+        }
 }
-

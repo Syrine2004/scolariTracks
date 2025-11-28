@@ -19,28 +19,43 @@ public class BackendApplication {
 
     @Bean
     CommandLineRunner start(AppUserRepository appUserRepository,
-                            ClasseRepository classeRepository,
-                            PasswordEncoder passwordEncoder) {
+            ClasseRepository classeRepository,
+            PasswordEncoder passwordEncoder) {
         return args -> {
 
             // 1. Création de l'ADMIN
-            if (appUserRepository.findByUsername("syrine").isEmpty()) {
-                AppUser admin = new AppUser();
-                admin.setUsername("syrine");
-                admin.setPassword(passwordEncoder.encode("soap"));
-                // GARANTIE MAJUSCULE POUR LA SÉCURITÉ : "ADMIN"
-                admin.setRole("ADMIN".toUpperCase());
-                appUserRepository.save(admin);
-                System.out.println("✅ ADMIN CRÉÉ AVEC RÔLE: " + admin.getRole());
-            }
+            appUserRepository.findByUsername("syrine")
+                    .ifPresentOrElse(existing -> {
+                        boolean needsUpdate = false;
+                        if (!"ADMIN".equalsIgnoreCase(existing.getRole())) {
+                            existing.setRole("ADMIN");
+                            needsUpdate = true;
+                        }
+                        if (!passwordEncoder.matches("soap", existing.getPassword())) {
+                            existing.setPassword(passwordEncoder.encode("soap"));
+                            needsUpdate = true;
+                        }
+                        if (needsUpdate) {
+                            appUserRepository.save(existing);
+                            System.out.println("✅ ADMIN MISE À JOUR (role/pwd resynchronisés).");
+                        }
+                    }, () -> {
+                        AppUser admin = new AppUser();
+                        admin.setUsername("syrine");
+                        admin.setPassword(passwordEncoder.encode("soap"));
+                        admin.setRole("ADMIN");
+                        appUserRepository.save(admin);
+                        System.out.println("✅ ADMIN CRÉÉ AVEC RÔLE: " + admin.getRole());
+                    });
 
             // 2. Création des CLASSES
-            // On vérifie le nom de la première classe pour s'assurer qu'elles n'existent pas
+            // On vérifie le nom de la première classe pour s'assurer qu'elles n'existent
+            // pas
             if (classeRepository.findByNom("RSI").isEmpty()) {
-                classeRepository.save(new Classe(null, "RSI", null));
-                classeRepository.save(new Classe(null, "MDW", null));
-                classeRepository.save(new Classe(null, "DSI", null));
-                classeRepository.save(new Classe(null, "SEM", null));
+                classeRepository.save(new Classe(null, "RSI", null, null));
+                classeRepository.save(new Classe(null, "MDW", null, null));
+                classeRepository.save(new Classe(null, "DSI", null, null));
+                classeRepository.save(new Classe(null, "SEM", null, null));
                 System.out.println("✅ CLASSES CRÉÉES (RSI, MDW, DSI, SEM)");
             }
         };

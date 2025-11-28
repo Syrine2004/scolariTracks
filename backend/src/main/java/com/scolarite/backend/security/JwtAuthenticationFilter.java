@@ -75,6 +75,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        // Generate a key from the secret string, ensuring minimum length for HS256 (256 bits = 32 bytes)
+        byte[] keyBytes;
+        try {
+            // Try to decode as Base64 first
+            keyBytes = Decoders.BASE64.decode(jwtSecret);
+        } catch (IllegalArgumentException e) {
+            // If not Base64, use the string directly and pad/truncate to 32 bytes
+            byte[] secretBytes = jwtSecret.getBytes();
+            keyBytes = new byte[32];
+            System.arraycopy(secretBytes, 0, keyBytes, 0, Math.min(secretBytes.length, 32));
+            // If shorter than 32 bytes, pad with zeros (or repeat the secret)
+            if (secretBytes.length < 32) {
+                for (int i = secretBytes.length; i < 32; i++) {
+                    keyBytes[i] = secretBytes[i % secretBytes.length];
+                }
+            }
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

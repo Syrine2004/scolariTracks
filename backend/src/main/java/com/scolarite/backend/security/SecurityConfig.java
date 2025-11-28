@@ -59,7 +59,7 @@ public class SecurityConfig {
 
                         // L'écriture reste sécurisée
                         .requestMatchers(HttpMethod.POST, "/api/etudiants/**", "/api/classes/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/etudiants/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/etudiants/**", "/api/classes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/etudiants/**", "/api/classes/**").hasRole("ADMIN")
 
                         // Bloquer tout le reste
@@ -74,10 +74,15 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Autoriser le frontend React et Swagger UI
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080"));
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000", 
+            "http://localhost:3001", 
+            "http://localhost:8080"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
