@@ -8,13 +8,13 @@ Votre projet inclut maintenant une documentation API complète via Swagger/OpenA
 
 Une fois le backend démarré, accédez à la documentation Swagger UI via :
 
-**URL :** `http://localhost:8080/swagger-ui.html`
+**URL :** `http://localhost:8081/swagger-ui.html`
 
 ### Accès à l'API JSON (OpenAPI)
 
 L'API JSON est disponible à :
 
-**URL :** `http://localhost:8080/api-docs`
+**URL :** `http://localhost:8081/api-docs`
 
 ### Fonctionnalités
 
